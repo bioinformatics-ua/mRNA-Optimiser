@@ -26,7 +26,7 @@ public class PseudoEnergyGCContentFitnessAssessor implements IFitnessAssessor
         PseudoEnergyCalculator.setBondEnergy(AU, CG, GU);
         
         this.originalSequence = originalSequence;
-        originalEnergy = PseudoEnergyCalculator.calculateEnergyEstimate(originalSequence);        
+        originalEnergy = PseudoEnergyCalculator.calculateMFE(originalSequence, true); //calculateEnergyEstimate(originalSequence);        
         originalGCContent = getGCContent(originalSequence);
     }
     
@@ -36,13 +36,11 @@ public class PseudoEnergyGCContentFitnessAssessor implements IFitnessAssessor
         CodonSequenceOptimizationTarget optimizedCodonSequence = (CodonSequenceOptimizationTarget) solution.getFeatureList().get(0);
         
         /* Calculate pseudo energy. */
-        double newEnergy = PseudoEnergyCalculator.calculateEnergyEstimate(optimizedCodonSequence.getSequence());
+        double newEnergy = PseudoEnergyCalculator.calculateMFE(optimizedCodonSequence.getSequence(), true); //calculateEnergyEstimate(optimizedCodonSequence.getSequence());
         double newGCContent = getGCContent(optimizedCodonSequence.getSequence());
         
         double energyGain = ((newEnergy-originalEnergy)/Math.abs(originalEnergy)) * 100;
         double gcContentGain = ((newGCContent - originalGCContent) / originalGCContent) * 100;
-        
-//        System.out.println(newEnergy + "\t\t" + originalEnergy + "\t\t" + energyGain);
         
         return energyGain - Math.abs(gcContentGain);
     }

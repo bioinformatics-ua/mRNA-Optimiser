@@ -40,7 +40,7 @@ public class CodonSequenceOptimizationTarget extends IOptimizationTarget
         this.codingEndIndex = codingEndIndex;
         
         /* Divide mRNA sequence into parts: the coding part, and the remaining anterior and posterior parts. */
-        this.codingSequence = new StringBuilder(rnaSequence.subSequence(codingStartIndex, codingEndIndex+1)); //*************** ATENÇÃO: ISTO TEM DE ESTAR MAL! DEVIA SER SO PARTE DA SEQUENCIA DE ENTRADA!!!
+        this.codingSequence = new StringBuilder(rnaSequence.subSequence(codingStartIndex, codingEndIndex+1));
         this.beginingSequence = rnaSequence.substring(0, codingStartIndex);
         this.endingSequence = rnaSequence.substring(codingEndIndex+1, rnaSequence.length());
                 
@@ -51,11 +51,11 @@ public class CodonSequenceOptimizationTarget extends IOptimizationTarget
         } 
         catch (FileNotFoundException ex)
         {
-            System.out.println("Error: Could not find the genetic code table file.");
+            System.out.println("Error: Could not find the genetic code table file: " + ex.getLocalizedMessage());
         } 
         catch (IOException ex)
         {
-            System.out.println("Error: Could not read the genetic code table file.");
+            System.out.println("Error: Could not read the genetic code table file: " + ex.getLocalizedMessage());
         }
     }
     
@@ -94,6 +94,7 @@ public class CodonSequenceOptimizationTarget extends IOptimizationTarget
         /* Apply mutation. */
         int numCodons = getCodingSequence().length() / 3;
         int numAffectedCodons = (int) Math.max(mutatedPercent * numCodons, 1);
+        assert numAffectedCodons > 0;
         StringBuilder sequence = getCodingSequence();
         while (numAffectedCodons > 0)
         {
@@ -117,7 +118,7 @@ public class CodonSequenceOptimizationTarget extends IOptimizationTarget
         
         return codonList.get(randomIndex);
     }
-    
+
     @Override
     public void print()
     {

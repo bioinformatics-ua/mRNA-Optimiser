@@ -25,6 +25,6 @@ public class PseudoEnergyFitnessAssessor implements IFitnessAssessor
         CodonSequenceOptimizationTarget optimizedCodonSequence = (CodonSequenceOptimizationTarget) solution.getFeatureList().get(0);
         
         /* Calculate pseudo energy. */
-        return PseudoEnergyCalculator.calculateEnergyEstimate(optimizedCodonSequence.getSequence());
+        return PseudoEnergyCalculator.calculateMFE(optimizedCodonSequence.getSequence(), true); //calculateEnergyEstimate(optimizedCodonSequence.getSequence());
     }
 }

@@ -1,10 +1,6 @@
 
 package pt.ua.ieeta.RNAmfeOpt.sa;
 
-import java.awt.SystemTray;
-import java.util.EnumMap;
-import pt.ua.ieeta.RNAmfeOpt.main.OptimiserParameter;
-
 /**
  *
  * @author Paulo Gaspar
@@ -28,7 +24,7 @@ public class SimulatedAnnealing extends Thread
     private boolean isMaximizeMode; //is the goal maximizing or minimizing?
     
     /* Neighbour generator. */
-    INeighbourGenerator neighbourGenerator = new CodonSequenceNeighbourGenerator();
+    INeighbourGenerator neighbourGenerator = new CodonSequenceNeighbourGenerator(); //new BondsNeighbourGenerator(); 
 
     /* DEBUG flag. */
     private boolean DEBUG = false;
@@ -54,6 +50,7 @@ public class SimulatedAnnealing extends Thread
         this.seed = seed; // initial individual
         this.emax = Double.MAX_VALUE;
         this.isMaximizeMode = true;
+        this.timemax = Integer.MAX_VALUE;
     }
     
     /** Class constructor. Receives a few parameters for the simmulated annealing algorithm.
@@ -86,6 +83,7 @@ public class SimulatedAnnealing extends Thread
         this.mutationAffectedPercent = mutationAffectedPercent;
         this.emax = Double.MAX_VALUE;
         this.isMaximizeMode = true;
+        this.timemax = Integer.MAX_VALUE;
     }
     
     public void setStopCriteria(int maxiter, int maxtime, double targetenergy, boolean isMaximizeMode)

@@ -72,6 +72,21 @@ public class PseudoEnergyCalculator
         return -energyEstimate;
     }
     
+    /** Calculates an MFE estimate using the pseudo energy and a linear regression equation. 
+     ** @param afterOptimization Indicates if the input sequence is an optimized sequence or not. */
+    public static double calculateMFE(String sequence, boolean afterOptimization)
+    {
+        double pseudoEnergy = calculateEnergyEstimate(sequence);
+        
+        /* This first divides the pseudoEnergy by the sequence size to average the energy of
+         * all calculated folds (it's not really a necessary step). Then it uses the linear 
+         * regression formula to convert the value to an MFE range. */
+        if (afterOptimization)
+            return ((pseudoEnergy/sequence.length())+15.212)/0.5287;
+        else
+            return ((pseudoEnergy/sequence.length())+8.21526067512)/0.456482883313;
+    }
+    
     /* Given two nucleotide sequences, return the energy of their bond when they pair. */
     private static double getPseudoEnergy(String seq1, String seq2)
     {

@@ -2,18 +2,23 @@ package pt.ua.ieeta.RNAmfeOpt.testing;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pt.ua.ieeta.RNAmfeOpt.optimization.ExternalFitnessAssessor;
 import pt.ua.ieeta.RNAmfeOpt.optimization.GeneSets;
 import pt.ua.ieeta.RNAmfeOpt.optimization.OptimizeCodonSequence;
-import pt.ua.ieeta.RNAmfeOpt.optimization.RNAFoldFitnessAssessor;
+import pt.ua.ieeta.RNAmfeOpt.sa.CodonSequenceOptimizationTarget;
 
 /**
- * Test bench to optimize several genes using RNAfold
+ * Test bench to optimize several genes using an external 
+ * evaluator (such as RNAfold).
+ * 
  * @author Paulo Gaspar
  */
 public class TestBench3 extends Thread
 {
     private static final boolean DEBUG = true;
     private static final int NUM_GENES_TO_TEST = 36; //MAX random set 2 = 36
+    
+    private static final ExternalPredictor predictor = new UNAFold(); //RNAStructure(); //Pknots(); //UNAFold(); //ViennaRNAFold();
     
     private int numberOfIterations;
     
@@ -24,7 +29,7 @@ public class TestBench3 extends Thread
     
     @Override
     public void run()
-    {   
+    {
         String setOfGenes[] = GeneSets.genesRandomSet2;
         
         long time = 0;
@@ -39,7 +44,7 @@ public class TestBench3 extends Thread
                     time = System.currentTimeMillis();
                 
                 /* Optimize gene. */
-                OptimizeCodonSequence optimizer = new OptimizeCodonSequence(originalSequence, new RNAFoldFitnessAssessor(), numberOfIterations);
+                OptimizeCodonSequence optimizer = new OptimizeCodonSequence(originalSequence, new ExternalFitnessAssessor(predictor), numberOfIterations);
                 optimizer.start();
                 optimizer.join();
                                 
@@ -47,8 +52,9 @@ public class TestBench3 extends Thread
                 {
                     time = System.currentTimeMillis() - time;
 
-                    String message = "AccurateEnergy: " + optimizer.sa.getScore() + "\tTime: " + time;
-                    System.out.println(message.replace(".", ","));
+                    String optimizedSequence = ((CodonSequenceOptimizationTarget)optimizer.getSolution().getFeatureList().get(0)).getCodingSequence().toString();
+                    String message = "Energy [" + predictor.getPredictorName() + "]: " + optimizer.sa.getScore() + "\tTime: " + time + "\tSequence: " + optimizedSequence;
+                    System.out.println(message.replace(".", ","));  
                 }
             } 
             catch (Exception ex)
@@ -68,7 +74,7 @@ public class TestBench3 extends Thread
                 numIterations = Integer.parseInt(iter);
         }
         
-        System.out.println("Test bench for mRNA mfe optimization (using RNAfold)");
+        System.out.println("Test bench for mRNA mfe optimization (using "+predictor.getPredictorName()+")");
         System.out.println("Num SA iterations for each gene: " + numIterations);
         System.out.println("---------------------------------------------------------");
 

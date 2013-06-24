@@ -3,9 +3,8 @@ package pt.ua.ieeta.RNAmfeOpt.optimization;
 
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import pt.ua.ieeta.RNAmfeOpt.sa.*;
+import pt.ua.ieeta.RNAmfeOpt.testing.ViennaRNAFold;
 
 /**
  *
@@ -26,9 +25,9 @@ public class OptimizeCodonSequence extends Thread
         assert endNuc > 0;
         
         /* Create seed. */
-        List<IOptimizationTarget> featureList = new Vector<IOptimizationTarget>();
-        featureList.add(new CodonSequenceOptimizationTarget(sequence, 1, startNuc-1, endNuc-1));
-        EvolvingSolution seed = new EvolvingSolution(featureList);
+        List<IOptimizationTarget> targetList = new Vector<IOptimizationTarget>();
+        targetList.add(new CodonSequenceOptimizationTarget(sequence, 1, startNuc-1, endNuc-1));
+        EvolvingSolution seed = new EvolvingSolution(targetList);
         
         sa = new SimulatedAnnealing(fitnessCalculator, seed, numIterations, 0.85, 0.2, 0.1, 0.3);
     }
@@ -48,7 +47,7 @@ public class OptimizeCodonSequence extends Thread
             sa.join();
         } catch (InterruptedException ex)
         {
-            Logger.getLogger(OptimizeCodonSequence.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("An exception occured while running the simulated annealing: " + ex.getLocalizedMessage());
         }
     }
     
@@ -57,12 +56,20 @@ public class OptimizeCodonSequence extends Thread
         return sa.getSolution();
     }
     
+    
+    
+    
+    
+    /*** TEST ***/
+    
     public static void main(String[] args) throws InterruptedException
     {
         System.out.println("* Starting codon sequence optimization experiment *");
 
-        String sequence = "AUGGAGGUGGCUGGCUGUUUCUGCAACAUGGAGCUGGGGUGGGGCAUCCCAGUGUCAAAGACUGCAGAGGGGAUUGCUGCACUGCACAGCUUGCAAGCCUUUCCUGAUGACCAGGAGAGUUCCAUAACCAGGUCUGUAGUUCCCACCUUGGCAGACACAGCCAAGCCCUCAGCCCCAGUCACUUCCCACUCCCUGCUCUCCAGGUACCACCCGGGUCAGUGA";
-        OptimizeCodonSequence codonSequenceOptimizer = new OptimizeCodonSequence(sequence, new PseudoEnergyFitnessAssessor(), 4000);
+//        String sequence = "AUGGAGGUGGCUGGCUGUUUCUGCAACAUGGAGCUGGGGUGGGGCAUCCCAGUGUCAAAGACUGCAGAGGGGAUUGCUGCACUGCACAGCUUGCAAGCCUUUCCUGAUGACCAGGAGAGUUCCAUAACCAGGUCUGUAGUUCCCACCUUGGCAGACACAGCCAAGCCCUCAGCCCCAGUCACUUCCCACUCCCUGCUCUCCAGGUACCACCCGGGUCAGUGA";
+        String sequence = "AUGGAGGUGGCUGGCUGUUUCUGCAACAUG";
+//        OptimizeCodonSequence codonSequenceOptimizer = new OptimizeCodonSequence(sequence, new PseudoEnergyFitnessAssessor(), 4000);
+        OptimizeCodonSequence codonSequenceOptimizer = new OptimizeCodonSequence(sequence, new ExternalFitnessAssessor(new ViennaRNAFold()), 4000);
         codonSequenceOptimizer.start();
         codonSequenceOptimizer.join();
         

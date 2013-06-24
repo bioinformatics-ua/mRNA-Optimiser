@@ -22,9 +22,9 @@ public class OptimizeNucleotideBonds extends Thread
     {
         /* Create seed. */
         List<IOptimizationTarget> featureList = new Vector<IOptimizationTarget>();
-        featureList.add(new BondEnergyOptimizationTarget(3, "CG"));
-        featureList.add(new BondEnergyOptimizationTarget(2, "AU"));
-        featureList.add(new BondEnergyOptimizationTarget(2, "GU"));
+        featureList.add(new BondEnergyOptimizationTarget(3, "CG")); //3
+        featureList.add(new BondEnergyOptimizationTarget(2, "AU")); //2
+        featureList.add(new BondEnergyOptimizationTarget(2, "GU")); //2
         EvolvingSolution seed = new EvolvingSolution(featureList);
         
         sa = new SimulatedAnnealing(new RunBondTestBench(), seed);

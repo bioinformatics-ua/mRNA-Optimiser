@@ -57,7 +57,7 @@ public class RNAOptimiser
     {
         NumberFormat formatter = new DecimalFormat("########.##");
         double initialGCContent = PseudoEnergyGCContentFitnessAssessor.getGCContent(rnaSequence)*100;
-        double initialEnergy = PseudoEnergyCalculator.calculateEnergyEstimate(rnaSequence);
+        double initialEnergy = PseudoEnergyCalculator.calculateMFE(rnaSequence, false); //calculateEnergyEstimate(rnaSequence);
         String gctName = GeneticCodeTableParser.getInstance().getGeneticCodeTableNames().get((Integer) params.get(OptimiserParameter.GCT));
         
         printline("Sequence size: " + rnaSequence.length(), false);
@@ -66,15 +66,15 @@ public class RNAOptimiser
         printline("Using the " + gctName + " genetic code", false);
         
         /* Optimize sequence using pseudo energy. */
-        printline("Optimisation started...", false);
+        printline("\nOptimisation started...", false);
         OptimizeMRNASequence optimizer = new OptimizeMRNASequence(rnaSequence, fitnessCalculator, params);
         optimizer.run(); //running on this thread, instead of launching a new thread.
-        printline("Done!", false);
+        printline("Done!\n", false);
         
         finalSequence = ((CodonSequenceOptimizationTarget) optimizer.getSolution().getFeatureList().get(0)).getSequence().toString();
         double optimizedPseudoEnergy = optimizer.sa.getScore();
         double finalGCContent = PseudoEnergyGCContentFitnessAssessor.getGCContent(finalSequence)*100;
-        double finalEnergy = PseudoEnergyCalculator.calculateEnergyEstimate(finalSequence);
+        double finalEnergy = PseudoEnergyCalculator.calculateMFE(finalSequence, true); //.calculateEnergyEstimate(finalSequence);
         printline("GC content final percentage: " + formatter.format(finalGCContent) + "%", false);
         printline("Final pseudo-energy: " + formatter.format(finalEnergy), false);
         printline("Final optimised sequence:", false);

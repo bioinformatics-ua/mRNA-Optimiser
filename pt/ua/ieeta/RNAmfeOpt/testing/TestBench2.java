@@ -2,10 +2,13 @@ package pt.ua.ieeta.RNAmfeOpt.testing;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pt.ua.ieeta.RNAmfeOpt.main.PseudoEnergyCalculator;
 import pt.ua.ieeta.RNAmfeOpt.optimization.GeneSets;
 import pt.ua.ieeta.RNAmfeOpt.optimization.OptimizeCodonSequence;
 import pt.ua.ieeta.RNAmfeOpt.optimization.PseudoEnergyFitnessAssessor;
+import pt.ua.ieeta.RNAmfeOpt.optimization.PseudoEnergyGCContentFitnessAssessor;
 import pt.ua.ieeta.RNAmfeOpt.sa.CodonSequenceOptimizationTarget;
+import pt.ua.ieeta.RNAmfeOpt.sa.IFitnessAssessor;
 
 /**
  * Test bench to optimize several genes using pseudo energy
@@ -15,8 +18,8 @@ public class TestBench2 extends Thread
 {
     private static final boolean DEBUG = true;
     private static final int NUM_GENES_TO_TEST = 36; //MAX = 36
-    private static final String setOfGenes[] = GeneSets.genesRandomSet2;
-    
+    private static final String setOfGenes[] = GeneSets.genesRandomSet6;
+    private double AU = 1.011575, CG = 3.117125, GU = 1.008516;
     private double[] accurateEnergyArray, pseudoEnergyArray;
     
     private int numberOfIterations;
@@ -36,6 +39,8 @@ public class TestBench2 extends Thread
         /* Use pre-calculated accurate-mfe results instead of calling RNAfold. */
 //        System.arraycopy(GeneSets.preCalcRandomSet1, 0, accurateEnergyArray, 0, NUM_GENES_TO_TEST);
         
+        boolean keepGC = true;
+        
         long time = 0;
         for (int i = 0; i < NUM_GENES_TO_TEST; i++)
         {
@@ -47,28 +52,51 @@ public class TestBench2 extends Thread
                 if (DEBUG) 
                     time = System.currentTimeMillis();
                 
+               /* With or without keeping the amount of GC content ? */
+               IFitnessAssessor fAssessor;               
+               if (keepGC)
+                   fAssessor = new PseudoEnergyGCContentFitnessAssessor(originalSequence); 
+               else
+                   fAssessor = new PseudoEnergyFitnessAssessor();
+               
                 /* Optimize gene. */
-                OptimizeCodonSequence optimizer = new OptimizeCodonSequence(originalSequence, new PseudoEnergyFitnessAssessor(), numberOfIterations);
+                OptimizeCodonSequence optimizer = new OptimizeCodonSequence(originalSequence, fAssessor, numberOfIterations);
                 optimizer.start();
                 optimizer.join();
                 
                 String optimizedSequence = ((CodonSequenceOptimizationTarget)optimizer.getSolution().getFeatureList().get(0)).getCodingSequence().toString();
-                double optimizedPseudoEnergy = optimizer.sa.getScore();
+                
+                PseudoEnergyCalculator.setBondEnergy(AU, CG, GU);
+//                double originalSequencePseudoEnergy = PseudoEnergyCalculator.calculateEnergyEstimate(originalSequence);
+                double optimizedSequencePseudoEnergy = PseudoEnergyCalculator.calculateEnergyEstimate(optimizedSequence);
                 
 //                pseudoEnergyArray[index++] = pseudoEnergy;
                 
                 /* Calculate accurate energy of the optimized sequence. */
-//                ViennaRNAFold rnaFold = new ViennaRNAFold(optimizedSequence);
+                ViennaRNAFold rnaFold = new ViennaRNAFold();
+                rnaFold.setSequence(optimizedSequence);
+                rnaFold.start();
+                rnaFold.join();
+//                accurateEnergyArray[index-1] = rnaFold.getEnergy();
+                
+                double optimizedSequenceAccurateEnergy = rnaFold.getEnergy();
+//                
+//                rnaFold = new ViennaRNAFold(originalSequence);
 //                rnaFold.start();
 //                rnaFold.join();
-//                accurateEnergyArray[index-1] = rnaFold.getEnergy();
+//                
+//                double originalSequenceAccurateEnergy = rnaFold.getEnergy();
+                
                 
                 if (DEBUG)
                 {
-                    time = System.currentTimeMillis() - time;
-
-                    String message = /*"AccurateEnergy: " + rnaFold.getEnergy() +*/ "\tPseudoEnergy: " + optimizedPseudoEnergy + "\tTime: " + time;
+//                    time = System.currentTimeMillis() - time;
+//
+//                    String message = "OriginalAccurateEnergy: " + originalSequenceAccurateEnergy + "\tOriginalPseudoEnergy: " + originalSequencePseudoEnergy + 
+//                                     "\tOptimizedAccurateEnergy: " + optimizedSequenceAccurateEnergy + "\tOptimizedPseudoEnergy: " + optimizedSequencePseudoEnergy;
+                    String message = "\tOptimizedAccurateEnergy: " + optimizedSequenceAccurateEnergy + "\tOptimizedPseudoEnergy: " + optimizedSequencePseudoEnergy;
                     System.out.println(message.replace(".", ","));
+//                      System.out.println(optimizedSequence);
                 }
             } 
             catch (Exception ex)

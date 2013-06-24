@@ -137,4 +137,25 @@ public class GeneticCodeTable
         
         return getSynonymousFromCodon(codon).size();
     }
+    
+    public String translateSequence(String codonSequence)
+    {
+        assert codonSequence != null;
+        assert codonSequence.length() % 3 == 0;
+        assert codonSequence.matches("[ATCG]*");
+        
+        if (codonSequence.isEmpty()) return "";
+        
+        
+        StringBuilder sb = new StringBuilder();
+        
+        for (int i = 0; i < codonSequence.length(); i+=3)
+        {
+            sb.append(getAminoAcidFromCodon(codonSequence.substring(i, i+3)));
+        }
+        
+        assert sb.length() == (codonSequence.length()/3);
+        
+        return sb.toString();
+    }
 }

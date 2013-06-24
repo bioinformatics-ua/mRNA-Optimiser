@@ -18,7 +18,7 @@ import pt.ua.ieeta.RNAmfeOpt.main.Options.Separator;
  */
 public class Main 
 {
-    private static String usageHints =  "\nmRNA Secondary Structure optimizer (v1.0)\n"
+    private static String usageHints =  "\nmRNA Secondary Structure optimizer (v1.1)\n"
                                 +"Paulo Gaspar, University of Aveiro, 2012\n"
                                 +"paulogaspar@ua.pt\n"
                                 +"\n"
@@ -38,11 +38,11 @@ public class Main
                                 +"                  (default = sequence size)\n\n"
                                 +"-d type           Optimization type: 0 to maximize MFE (default)\n"
                                 +"                                     1 to minimize MFE\n\n"
-                             /*   +"-m max/min MFE    Set maximum or minimum MFE, depending on the selected type\n"
+                                +"-m max/min MFE    Set maximum or minimum MFE, depending on the selected type\n"
                                 +"                  The algorithm stops if it reaches this value.\n"
                                 +"                  NOTE: please don't use the '-' symbol. Use only a positive\n"
                                 +"                  number and the program will convert it to negative!\n"
-                                +"                  (default = no limit)\n\n" */
+                                +"                  (default = no limit)\n\n"
                                 +"-t maxTime        Maximum optimization time, in minutes (default = no limit).\n\n"
                                 +"-i iterations     Number of iterations the algorithm runs. The more iterations\n"
                                 +"                  the longer it will take, but results will usually be better\n"

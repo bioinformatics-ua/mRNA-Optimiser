@@ -61,7 +61,8 @@ public class TestBench4 extends Thread
                         double optimizedPseudoEnergy = optimizer.sa.getScore();
 
                         /* Calculate accurate energy of the optimized sequence using RNAfold. */
-                        ViennaRNAFold rnaFold = new ViennaRNAFold(optimizedSequence);
+                        ViennaRNAFold rnaFold = new ViennaRNAFold();
+                        rnaFold.setSequence(optimizedSequence);
                         rnaFold.start();
                         rnaFold.join();
 

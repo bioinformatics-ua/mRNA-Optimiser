@@ -11,7 +11,7 @@ import pt.ua.ieeta.RNAmfeOpt.optimization.GeneSets;
  */
 public class TestBench extends Thread
 {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final int NUM_GENES_TO_TEST = 36;
     
     private double[] accurateEnergyArray, pseudoEnergyArray;
@@ -32,10 +32,10 @@ public class TestBench extends Thread
         pseudoEnergyArray = new double[NUM_GENES_TO_TEST];
         int index = 0;
         
-        String setOfGenes[] = GeneSets.genesRandomSet2;
+        String setOfGenes[] = GeneSets.genesRandomSet6;
         
         /* Use pre-calculated accurate-mfe results instead of calling RNAfold. */
-        System.arraycopy(GeneSets.preCalcRandomSet2, 0, accurateEnergyArray, 0, NUM_GENES_TO_TEST);
+        System.arraycopy(GeneSets.preCalcRandomSet6, 0, accurateEnergyArray, 0, NUM_GENES_TO_TEST);
         
         long time = 0;
         for (int i = 0; i < NUM_GENES_TO_TEST; i++)

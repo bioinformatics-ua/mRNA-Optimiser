@@ -20,7 +20,7 @@ public class GCContentTest extends Thread
     @Override
     public void run()
     {
-        String setOfGenes[] = GeneSets.genesRandomSet2;
+        String setOfGenes[] = GeneSets.genesRandomSet5;
         
         for (int i = 0; i < NUM_GENES_TO_TEST; i++)
         {
